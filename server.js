@@ -13,6 +13,6 @@ http.createServer((q,s)=>{const u=new URL(q.url,"http://x"),k=u.searchParams.get
    else if(u.pathname=="/vote"&&d.id){peers[String(d.id).slice(0,16)]=d;pushP()}}catch(e){}
   s.writeHead(204);s.end()});return}
  const f=u.pathname=="/"?"index.html":path.normalize(u.pathname).replace(/^(\.\.[\/\\])+/,"");
- fs.readFile(path.join(__dirname,"public",f),(e,x)=>{if(e){s.writeHead(404);return s.end("404")}
+ fs.readFile(path.join(__dirname,f),(e,x)=>{if(e){s.writeHead(404);return s.end("404")}
   s.writeHead(200,{"Content-Type":f.endsWith(".html")?"text/html; charset=utf-8":"text/plain"});s.end(x)})
 }).listen(PORT,()=>console.log("Oyun: http://localhost:"+PORT+"/?k="+KEY));
