@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Paradoks Odası · Çöken Oda</title>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Hanken+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#0b0c10;--ink:#f4f1ea;--mut:#9aa0ad;--card:#12141b;--line:#232734;--glow:#3a0a14;--a1:#38c6ff;--a2:#ffb703;--a3:#ff3b4f;--onc:#0b0c10;--t1:#3ddc97;--t2:#ffb703;--t3:#c77dff;--acc:var(--a1);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-r="2"]{--acc:var(--a2)}
+:root[data-r="3"]{--acc:var(--a3)}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#eceff4;--ink:#10131a;--mut:#5a6475;--card:#fff;--line:#ccd3de;--glow:#ffd6dc;--a1:#0a7fa8;--a2:#a86400;--a3:#c4162a;--onc:#fff;--t1:#0c8a5a;--t2:#a86400;--t3:#7b3fc4}}
+:root[data-theme="light"]{--bg:#eceff4;--ink:#10131a;--mut:#5a6475;--card:#fff;--line:#ccd3de;--glow:#ffd6dc;--a1:#0a7fa8;--a2:#a86400;--a3:#c4162a;--onc:#fff;--t1:#0c8a5a;--t2:#a86400;--t3:#7b3fc4}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;color:var(--ink);font:400 clamp(17px,1.5vw,23px)/1.45 "Hanken Grotesk",Arial,sans-serif;background:radial-gradient(ellipse at 50% 115%,var(--glow),transparent 65%),var(--bg)}
+h1,h2,h3,.chip,#timer,#go,.dl{font-family:"Big Shoulders Display","Arial Narrow",Arial,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;justify-content:space-between;padding:.7rem 1rem}
+h1{margin:0;font-size:clamp(1.5rem,3vw,2.6rem);font-weight:900;letter-spacing:.02em}
+h1 span{color:var(--acc);margin-left:.6rem}
+#score{display:flex;gap:.6rem;flex-wrap:wrap}
+.chip{border-left:6px solid var(--c);background:var(--card);padding:.1rem .8rem;display:flex;gap:.6rem;align-items:baseline;font-size:1.3em;font-weight:700}
+.chip em{font-style:normal;font-weight:900;font-size:1.6em;color:var(--c)}
+#room{flex:1;position:relative;margin:0 .6rem;border:1px solid var(--line);background:linear-gradient(var(--line) 1px,transparent 1px) 0 0/100% 56px,linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/56px 100%,var(--card);padding:calc(var(--p,0)*9vmin);transition:padding .1s linear}
+#room::before{content:"";position:absolute;inset:0;pointer-events:none;border:calc(var(--p,0)*9vmin) solid;border-image:repeating-linear-gradient(-45deg,var(--acc) 0 14px,#0b0c10 14px 28px) 1}
+#room.urgent{animation:pl .6s infinite}
+@keyframes pl{50%{box-shadow:inset 0 0 12vmin #ff3b4f,0 0 5vmin #ff3b4f}}
+#timer{position:absolute;z-index:2;top:.3rem;right:1rem;font-size:clamp(4rem,11vw,10rem);font-weight:900;color:var(--acc);line-height:.9;text-shadow:0 0 .35em var(--acc)}
+#view{position:relative;z-index:1;padding:1rem 1.2rem 1.4rem}
+h2{margin:.2rem 0 .9rem;font-size:clamp(1.5rem,2.8vw,2.6rem);font-weight:800;line-height:1.08;max-width:36ch}
+.tag{color:var(--acc);margin:0;font-weight:600}
+.opts{list-style:none;padding:0;margin:0 0 1rem;display:grid;gap:.5rem;max-width:60ch}
+.opts b{display:inline-block;min-width:1.7em;text-align:center;background:var(--acc);color:var(--onc);border-radius:3px;margin-right:.5rem}
+.data{border:2px solid var(--acc);background:var(--bg);padding:.6rem .9rem;margin:0 0 1rem;max-width:62ch}
+.panels{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
+.panel{border-top:6px solid var(--c);background:var(--bg);padding:.5rem .7rem}
+.panel h3{margin:.1rem 0 .3rem;font-size:1.5em}
+.panel p{margin:.3rem 0}
+.b{font:inherit;color:inherit;background:transparent;border:1px solid var(--line);border-radius:4px;padding:.25rem .65rem;margin:.15rem;cursor:pointer}
+.b.on{background:var(--c);border-color:var(--c);color:var(--onc);font-weight:600}
+.b:focus-visible,#go:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.dl{font-size:2.2rem;font-weight:900;margin:.2rem 0}
+.names{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;max-width:42rem;margin-bottom:1rem}
+input,select{font:inherit;color:inherit;background:var(--bg);border:0;border-bottom:4px solid var(--c,var(--acc));padding:.4rem}
+#go{margin:.6rem;padding:.8rem;border:0;border-radius:4px;background:var(--acc);color:var(--onc);font-size:1.7rem;font-weight:900;letter-spacing:.04em;cursor:pointer}
+@media(max-width:700px){.panels,.names{grid-template-columns:1fr}#timer{position:static;margin:.4rem 1rem 0}}
+@media(prefers-reduced-motion:reduce){#room{transition:none}#room.urgent{animation:none}}
+.qr{display:inline-block;background:#fff;padding:10px;margin:.4rem 0}
+</style></head><body>
+<header><h1>Paradoks Odası <span id="rn"></span></h1><div id="score"></div></header>
+<main id="room"><div id="timer"></div><div id="view"></div></main>
+<button id="go" type="button"></button>
+<script>
+const R={1:{n:"Tersine Savunma",d:"Önce kendi tarafını seç. Sonra kura seni karşı tarafı savunmaya zorlar. Diğer iki takım oy verir."},2:{n:"Son Kelime",d:"Yarım cümleyi kendi kelimelerinle tamamla. Sonra kitaptaki asıl cümle açılır."},3:{n:"Çöken Oda",d:"Bahis oyna, süre daralsın. Yeni veri gelince kararını koru ya da değiştir. Finalde tüm puan masada."}};
+const ALL=[
+{r:1,t:"Yorum mu, bulgu mu?",q:"Güçlü ve tekrarlanmış bir bilimsel bulgu, bir dinî metnin geleneksel yorumuyla çelişiyor gibi görünüyor. Metne dokunmadan çelişkiyi gidermek için hangi adım önce atılmalı?",a:["Bulgunun yöntemi ve sınırları yeniden sorgulanmalı","Metnin yorumu, dönemin bilgisi ışığında yeniden düşünülmeli"]},
+{r:1,t:"Çağın sınırı",q:"Kitaba göre felsefi bilgi, ortaya çıktığı dönemin sınırlılıklarını taşır. Bir düşünce kendi çağının sınırlarını taşıyor ve bugün yanlış çıkabiliyorsa onu hâlâ “bilgi” saymak mümkün müdür?",a:["Evet; sınırlı olsa da sistemli düşünmenin ürünüdür","Hayır; çağın sınırı içindeki düşünce bilgi değil, tarihî belgedir"]},
+{r:1,t:"Finansman ve özgürlük",q:"İslam medeniyetinde bilginler devletin ve vakıfların maddi desteğiyle çalıştı. Bilimi finanse eden güç hangi araştırmanın yapılacağını da belirliyorsa bu bilim özgür sayılabilir mi?",a:["Evet; destek ile özgürlük ayrı şeylerdir","Hayır; finansman sonunda yönü belirler"]},
+{r:1,t:"Tercümenin süzgeci",q:"Abbasiler Yunanca eserleri Arapçaya çevirirken bilgiyi kendi inanç ve düşünce dünyalarından geçirdi. Dışarıdan gelen bilgiyi kendi değerlerine göre seçmek bilgiyi zenginleştirir mi, çarpıtır mı?",a:["Süzgeç, bilgiyi anlamlı ve kalıcı hâle getirir","Süzgeç, bilginin tarafsızlığını bozar"]},
+{r:1,t:"Bilimin güvenilirliği",q:"Kitap hiçbir düşüncenin mutlak anlamda objektif olamayacağını söyler. Bilim de insan düşüncesinin ürünüyse, bilimsel bilgiye güvenmemizin asıl dayanağı nedir?",a:["Yöntem, kişisel ve çağsal sınırları aşmayı sağlar","Bilim de çağının sınırını taşır; güven her zaman kısmîdir"]},
+{r:1,t:"Üç alan",q:"Din anlam arayışına ve ahlaka, bilim işleyişe, felsefe ise ikisini sorgulamaya dayanır. Bu üçünden biri insanın hayatından çıkarılsa, diğer ikisi onun yerini tutabilir mi?",a:["Hayır; her biri ayrı bir ihtiyaca karşılık gelir","Evet; insan eksik kalanı diğerleriyle dengeleyebilir"]},
+{r:1,t:"Sorgulamanın bedeli",q:"Felsefe her şeyi sorgular, din ise bir inanç bağlılığı ister. Sorgulamanın sınırı olmaması, inancın sağlamlığıyla bağdaşır mı?",a:["Evet; sorgulanan inanç daha derin ve sağlam olur","Hayır; sınırsız sorgulama inancın temelini aşındırır"]},
+{r:1,t:"Ahlakın kaynağı",q:"Kitap, dinin ahlaki hayatın temelini oluşturduğunu söyler. Peki ahlak, vahiyden bağımsız olarak yalnızca akıl ve gözlemle de kalıcı biçimde temellendirilebilir mi?",a:["Evet; akıl ve tecrübe tek başına ahlak kurabilir","Hayır; kalıcı bir ahlak için aşkın bir dayanak gerekir"]},
+{r:1,t:"Çok yönlü bilgin",q:"Müslüman bilginler çoğu zaman hem hadis ve kelam gibi dinî ilimlerle hem de tıp, astronomi gibi alanlarla uğraştı. Bugün bilgi bu kadar genişken, bir kişinin her ikisinde de derinleşmesi mümkün mü, gerekli mi?",a:["Evet; ilimler birbirini besleyen bütündür","Hayır; derinlik ancak uzmanlaşmayla gelir"]},
+{r:1,t:"İlim ve yapay zekâ",q:"Kitap ilmi “bir şeyi gerçek yönüyle kavramak” olarak anlatır. Bir yapay zekâ olguları insandan daha doğru sıralayıp bağlayabiliyorsa, ilim sahibi sayılabilir mi?",a:["Evet; kavrayış, ortaya koyduğu işlevle ölçülür","Hayır; kavrayış bilinç ve anlamayı gerektirir"]},
+{r:1,t:"Korumak mı, sorgulamak mı?",q:"Kütüphaneler ve medreseler bilgiyi koruyup nesilden nesile aktardı. Bilginin ilerlemesi için onu aynen korumak mı, sürekli yeniden sorgulamak mı daha belirleyicidir?",a:["Korunan birikim ilerlemenin zeminidir","Sorgulanmayan birikim ilerlemeyi durdurur"]},
+{r:1,t:"Bugünün ihtiyacı",q:"Sınırlı bir vakıf bütçesiyle ya halkın bugünkü sağlık ihtiyacını karşılayan bir şifahane ya da gelecekte binlerce kişiye yarayacak bir rasathane kurulabiliyor. Hangi gerekçe daha ağır basar?",a:["Bugün acı çeken insanın ihtiyacı","Yarın herkese yarayacak bilginin yatırımı"]},
+{r:1,t:"İlk eğitim",q:"Mektepte çocuklara önce okuma yazma ve Kur’an eğitimi verildi; bilimler sonraki kurumlarda başladı. Çocuğun ilk eğitiminde değerler mi önce gelmeli, yoksa sorgulama becerisi mi?",a:["Önce değerler; sorgulama sağlam zemine oturur","Önce sorgulama; değerler sorgulanarak içselleştirilir"]},
+{r:2,q:"Din, insanın manevi ihtiyaçlarını karşılamasının yanında",n:"dünyadaki anlam arayışına yardımcı olur ve ahlaki hayatın temelini oluşturur.",p:"s. 48"},
+{r:2,q:"Bilim, gözlem ve araştırma yoluyla",n:"evrendeki fiziksel düzenin nasıl işlediğini açıklar; somut ve doğrulanabilir bilgi sunar.",p:"s. 48"},
+{r:2,q:"Felsefe, bilimin verdiği somut verileri akıl ve mantık süzgecinden geçirerek",n:"varlık, bilgi ve değer alanlarında düşünce dünyamızı zenginleştirir.",p:"s. 48"},
+{r:2,q:"Din ve bilim kendi kaynaklarından bilgi ortaya koyarken felsefe bunu",n:"düşünsel sorgulama yöntemiyle analiz eder.",p:"s. 48"},
+{r:2,q:"Felsefi bilgi, yalnızca ileri sürülen bir düşünce değildir; o düşüncenin",n:"başkaları tarafından da anlaşılabilmesi, aktarılabilmesi ve kabul edilebilir olması gerekir.",p:"s. 49"},
+{r:2,q:"Düşüncenin objektiflik iddiası vardır, ancak hiçbir düşünce",n:"mutlak anlamda objektif bir geçerliliğe sahip olamaz.",p:"s. 49"},
+{r:2,q:"Her düşünürün düşüncesinde, yaşadığı toplumun ve çağın izleri vardır; çünkü",n:"bireysel, toplumsal ve tarihsel bir arka plan düşüncenin şekillenmesinde belirleyicidir.",p:"s. 49"},
+{r:2,q:"Felsefe, genellikle",n:"bir dünya görüşü ve varlık teorisi olarak tanımlanır.",p:"s. 49"},
+{r:2,q:"Düşünürler yaşadıkları topluma ve çağın zihniyetine bağlı olduğu için felsefi bilgi, ortaya çıktığı dönemin",n:"sınırlılıklarını içerir.",p:"s. 49"},
+{r:2,q:"Filozof, sözlükte",n:"felsefeye ilgi duyan ve felsefenin gelişmesine katkıda bulunan kimse olarak tanımlanır.",p:"s. 50"},
+{r:2,q:"İlim, sözlükte",n:"bir şeyi gerçek yönüyle kavramak anlamına gelir.",p:"s. 50"},
+{r:2,q:"Âlim, ilim sahibi olmakla kalmaz,",n:"tefsir, hadis, kelam gibi İslam ilimlerinde yetkin olan Müslüman bireydir.",p:"s. 50"},
+{r:2,q:"İlk dönem İslam kültüründe felsefi düşünce henüz sistemli ilerlememişti, ancak Müslümanlar",n:"sorgulamaya ve öğrenmeye merak duyuyordu.",p:"s. 50"},
+{r:2,q:"Kur’an ve Hz. Peygamber, Müslümanları",n:"ilim öğrenmeye, düşünmeye ve araştırmaya teşvik etmiştir.",p:"s. 51"},
+{r:2,q:"Emeviler döneminde başlayıp Abbasiler döneminde hız kazanan tercüme faaliyetleri sayesinde",n:"Müslüman âlimler geçmiş bilgi birikimine sahip olmuş, Bağdat bilim ve kültür merkezi hâline gelmiştir.",p:"s. 51"},
+{r:2,q:"Müslüman âlimler, çevirdikleri eserlerin ardından",n:"kendi düşünceleriyle birikimi ileri taşıyarak matematik, mantık, fizik, kimya ve astronomide katkı sağlamıştır.",p:"s. 51"},
+{r:2,q:"Mescit, secde edilen yer anlamına gelir; ancak yalnızca bir ibadet yeri değil",n:"hayatın merkezi olmuş, eğitim ve toplumsal konuların konuşulduğu mekân olmuştur.",p:"s. 53"},
+{r:2,q:"Mektep, “yazmak” anlamındaki “ketebe” kökündendir ve",n:"çocuklara dinî eğitim verilen ilk eğitim kurumudur.",p:"s. 54"},
+{r:2,q:"Medrese, cami, mescit ve mekteplerde verilen eğitimin",n:"daha üst düzeyini temsil eder; bugünkü fakülte, yüksekokul ve üniversite seviyesindedir.",p:"s. 54"},
+{r:2,q:"Nizamiye Medresesi,",n:"Selçuklu veziri Nizamülmülk tarafından kurulmuştur ve İslam medeniyetinin önemli medreselerindendir.",p:"s. 54"},
+{r:2,q:"Darülhadis, hadis eğitiminin verildiği kurumdur; hadis derslerinin ilk yapıldığı yer olarak",n:"Mekke döneminde Erkam’ın evi gösterilir.",p:"s. 55"},
+{r:2,q:"Beytülhikme,",n:"tercüme faaliyetlerinin ve ilmî araştırmaların yürütüldüğü merkezdir.",p:"s. 55"},
+{r:2,q:"Rasathaneler astronomik gözlemlerin yapıldığı mekânlardır; İslam’da bu ilim önemlidir, çünkü",n:"namaz, oruç ve hac gibi ibadetlerin vakitlerinin ayarlanması gerekir.",p:"s. 57"},
+{r:2,q:"Şifahaneler, bimarhane ve darüşşifa adlarıyla da bilinir ve",n:"bugünkü hastanelerin işlevini gören kurumlardır.",p:"s. 57"},
+{r:3,t:"Beytülhikme’nin bütçesi",q:"9. yüzyılda bir şehrin vakfı yılda yalnızca tek bir kuruma yatırım yapabiliyor. Kararınız yıllarca sürecek.",o:["Yunanca tıp ve astronomi eserlerinin tercümesi","Hadis ilmi için yeni bir darülhadis","Yaralılar ve hastalar için bir şifahane"],n:"Şehirde salgın başladı. Aynı anda, çevrilmemiş bir tıp eserinde salgına karşı bir yöntem bulunduğu öğrenildi."},
+{r:3,t:"Rasathane ve ibadet vakti",q:"Rasathanenin gözlemleri, halkın alıştığı ibadet vakitleriyle birkaç dakikalık fark gösteriyor. Ne yaparsınız?",o:["Yeni hesabı hemen uygularız","Halkı bilgilendirip kademeli geçeriz","Eski uygulamayı koruruz"],n:"Gözlem, ikinci bir rasathanede bağımsız olarak aynı farkı verdi."},
+{r:3,t:"Yapay zekâ ve felsefi bilgi",q:"Bir yapay zekâ felsefe metinlerini okuyup varlığın anlamına dair tutarlı bir yorum üretiyor. Kitaba göre felsefi bilgi, insanın sistemli düşünme etkinliğinin sonucudur. Bu yorum felsefi bilgi sayılır mı?",o:["Sayılır","Yalnızca insana yardımcıdır","Sayılmaz"],n:"Aynı yapay zekâ ertesi gün aynı soruya tam tersi bir yorum verdi."},
+{r:3,t:"Tercümede çelişen bölüm",q:"Bir bilgin, Yunanca bir felsefe eserinin çevirisinde dinî bir kavramla çelişen bir bölüm buluyor. Eser Beytülhikme’de çevrilmeyi bekliyor.",o:["Eseri aynen çevirir","Bölümü notla belirtip çevirir","Bölümü hiç çevirmez"],n:"Aynı bölümün, tıp ilminde temel kabul edilen bir görüşün dayanağı olduğu anlaşıldı."},
+{r:3,t:"Medrese hocasının sınavı",q:"Bir medrese hocası, kanıtlanmış ama halk arasında kabul görmeyen bir bilgiyi öğrencilerine öğretmek istiyor.",o:["Hemen öğretir","Önce toplumu hazırlar","Öğretmez"],n:"Bu bilgiyi bilmeyen bir önceki nesil, yanlış bir uygulama yüzünden zarar görmüştü."},
+{r:3,t:"Kusurlu ama yararlı kuram",q:"Bir filozofun kuramı, çağının sınırlılıkları yüzünden hatalı bir temele dayanıyor; fakat ahlaki bakımdan faydalı sonuçlar doğuruyor.",o:["Kuramı düzeltir","Faydasına bakarak sürdürür","Kuramı tamamen kaldırır"],n:"Kuram yüzünden bir toplulukta yanlış bir uygulama yaygınlaşmaya başladı."},
+{r:3,t:"Ders kitabındaki yapay zekâ",q:"Okulunuzun ders kitabına bir yapay zekâ metni, öğretmen kontrolü olmadan eklenecek.",o:["Hemen ekler","Önce uzman denetiminden geçirir","Hiç eklemez"],n:"Aynı konu, başka bir yapay zekâda tamamen çelişen bilgilerle anlatıldı."},
+{r:3,t:"Mektepte erken bilim",q:"Mektepte çocuklara önce dinî eğitim veriliyor. Bir bilgin, aynı yaşta akıl yürütme ve matematiğe de başlanmasını istiyor.",o:["İkisini birlikte başlatır","Önce dinî eğitim, sonra bilim","Ailelerin tercihine bırakır"],n:"İkisini birlikte alan çocukların her iki alanda da daha başarılı olduğu görüldü, ama bazı aileler çocuklarını okuldan çekti."},
+{r:3,t:"Nadir kitabın kaderi",q:"Kütüphaneye bağışlanan nadir bir kitap hem değerli bilimsel veriler hem de tartışmalı görüşler içeriyor.",o:["Herkese açar","Yalnızca uzmanlara açar","Arşivde saklar, açmaz"],n:"Kitabın tek nüshası zarar görmeye başladı."},
+{r:3,t:"Rasathane ve hükümdar",q:"Rasathanenin yöneticisini destekleyen hükümdar, gözlemlerin kehanet yapmak için kullanılmasını istiyor.",o:["Reddeder","Gözlemi kehanetle birleştirir","Görevden ayrılır"],n:"Reddederse rasathanenin vakfı kapatılacak."},
+{r:3,t:"Şifahanede sıra",q:"Savaştan sonra şifahane yaralılarla doldu, kaynaklar yetersiz. Hekimler sırayı belirlemek zorunda.",o:["Önce en ağır yaralılar","Önce kurtulma ihtimali yüksekler","Geliş sırasına göre"],n:"İki deneyimli hekim, ağır yaralıların kurtulma oranı konusunda birbirine zıt tahminler verdi."},
+{r:3,t:"Tek ders saati",q:"Bir lise programında “İnsan nasıl bilir?” sorusuna ayrılan tek bir ders saati var.",o:["Bilimsel yöntem","Felsefi sorgulama","Vahiy ve yorum"],n:"Bir tek yöntemle öğrenen gençler, diğer ikisini giderek “anlamsız” bulmaya başladı."},
+{r:3,t:"Final · Genç araştırmacı",q:"Bir lise öğrencisi araştırmasında, kendi inancıyla çelişir gibi görünen bir sonuç buldu. Ne yapmalı?",o:["Sonucu yayımlar, yorumunu tartışmaya açar","Önce bir bilim insanına ve bir din bilginine danışır","Çelişki çözülene kadar yayımlamaz"],n:"Sonuç, ikinci bir laboratuvarda tekrarlanamadı.",f:1}
+];
+let S=ALL;
+function build(){const m=$("len").value,c={k:[3,5,3],o:[6,12,6],t:[13,24,13]}[m],o=[];[1,2,3].forEach((r,x)=>{let a=ALL.filter(q=>q.r==r&&!q.f).sort(()=>Math.random()-.5);const f=ALL.find(q=>q.r==r&&q.f);a=a.slice(0,c[x]-(f?1:0));if(f)a.push(f);o.push(...a)});S=o}
+const IL=["Akıl","Veri","Din ve ahlak","Vicdan"],AB=["A","B","C"],LB=["Uzak","Yakın","Tam isabet"];
+let T=[{n:"Akıl",s:50},{n:"Gözlem",s:50},{n:"Vicdan",s:50}],i=0,ph="start",D=[],tm=null,AC=null,TE=0,TOT=0;
+const $=id=>document.getElementById(id),room=$("room");
+const esc=s=>s.replace(/[&<>"]/g,c=>"&#"+c.charCodeAt(0)+";");
+const stake=k=>D[k].o===null?0:Math.round(T[k].s*D[k].b/100);
+function reset(){D=T.map(()=>({o:null,o2:null,il:null,b:S[i].f?100:10,j:1,dl:0}))}
+function beep(f){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.value=.08;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+.08)}catch(e){}}
+function stop(){TE=0;clearInterval(tm);room.classList.remove("urgent");room.style.setProperty("--p",0);$("timer").textContent=""}
+function run(sec,end){stop();const t0=Date.now(),w=S[i].r==3;TE=t0+sec*1000;TOT=sec;let last=-1;tm=setInterval(()=>{const r=Math.max(0,sec-(Date.now()-t0)/1000),c=Math.ceil(r);if(w)room.style.setProperty("--p",1-r/sec);$("timer").textContent=c;room.classList.toggle("urgent",w&&c<=10&&r>0);if(c!==last){last=c;if(c<=10&&c>0)beep(c<=3?880:520)}if(r<=0){clearInterval(tm);room.classList.remove("urgent");end()}},100)}
+function apply(){const s=S[i];D.forEach((d,k)=>{const t=T[k];let v;if(s.r==3){const st=stake(k),m=(s.f?2:1)*(t.rk?2:1);v=d.j==2?st*m:d.j==0?(t.rk?-Math.ceil(t.s/2):-st):0}else v=d.j*10;d.dl=v;t.s=Math.max(0,t.s+v)})}
+function next(){const r=S[i].r;
+ if(ph=="start"){T.forEach((t,k)=>{t.n=$("n"+k).value.trim()||t.n;t.s=50;t.rk=0});build();i=0;reset();ph="intro"}
+ else if(ph=="intro")ph=S[i].r==3?"risk":"oku";
+ else if(ph=="risk")ph="oku";
+ else if(ph=="oku"){if(r==1){ph="sec";run(20,next)}else if(r==2){ph="yaz";run(30,next)}else{ph="karar";run(40,next)}}
+ else if(ph=="sec"){stop();D.forEach(d=>d.o2=d.o===null?Math.round(Math.random()):1-d.o);ph="kura";run(45,next)}
+ else if(ph=="kura"){stop();ph="juri"}
+ else if(ph=="yaz"){stop();ph="ac"}
+ else if(ph=="karar"){stop();D.forEach(d=>d.o2=d.o);ph="veri";run(20,next)}
+ else if(ph=="veri"){stop();ph="juri"}
+ else if(ph=="juri"||ph=="ac"){apply();ph="sonuc"}
+ else if(ph=="sonuc"){if(i<S.length-1){i++;reset();ph=S[i].r!=r?"intro":"oku"}else ph="end"}
+ else{T.forEach(t=>{t.s=50;t.rk=0});S=ALL;i=0;reset();ph="start"}
+ render()}
+const B=(k,f,v,l,on)=>`<button type="button" class="b${on?" on":""}" data-k="${k}" data-f="${f}" data-v="${v}">${l}</button>`;
+const J=(k,d,L)=>[0,1,2].map(j=>B(k,"j",j,L?L[j]:j,d.j===j)).join("");
+function panel(k){
+ const d=D[k],t=T[k],s=S[i],r=s.r;let h=`<div class="panel" style="--c:var(--t${k+1})"><h3>${esc(t.n)}</h3>`;
+ if(ph=="risk")h+=`<p>Puanın: ${t.s}</p>`+B(k,"rk",0,"Güvenli",!t.rk)+B(k,"rk",1,"Riskli ⚡",!!t.rk);
+ else if(ph=="sonuc")h+=`<p class="dl">${d.dl>0?"+":d.dl<0?"−":""}${Math.abs(d.dl)}</p>`;
+ else if(ph=="juri"||ph=="ac"){
+  if(r==3)h+=`<p>${d.o===null?"Karar vermedi · bahis 0":AB[d.o2]+" · "+(IL[d.il]||"ilkesiz")+" · bahis "+stake(k)}</p><p>Diğer takımlardan evet oyu:</p>`+J(k,d);
+  else if(r==1)h+=`<p>Savunduğu taraf: ${AB[d.o2]}. Diğer takımlardan evet oyu:</p>`+J(k,d);
+  else h+=J(k,d,LB)}
+ else if(ph=="sec")h+=[0,1].map(x=>B(k,"o",x,AB[x],d.o===x)).join("");
+ else if(ph=="kura")h+=`<p class="dl">Savunacağın taraf: ${AB[d.o2]}</p>`;
+ else if(ph=="karar")h+=AB.map((a,x)=>B(k,"o",x,a,d.o===x)).join("")+"<br>"+IL.map((a,x)=>B(k,"il",x,a,d.il===x)).join("")+"<br>"+(s.f?`<p>Tüm puan masada: ${t.s}</p>`:[10,50,100].map(p=>B(k,"b",p,`%${p} · ${Math.round(t.s*p/100)}`,d.b===p)).join(""));
+ else if(ph=="veri")h+=AB.map((a,x)=>B(k,"o2",x,a,d.o2===x)).join("")+(d.o2!==d.o?"<p>Kararını değiştirdi</p>":"<p>Kararında ısrar ediyor</p>");
+ return h+"</div>"}
+function render0(){
+ $("score").innerHTML=T.map((t,k)=>`<div class="chip" style="--c:var(--t${k+1})"><b>${esc(t.n)}${t.rk?" ⚡":""}</b><em>${t.s}</em></div>`).join("");
+ const s=S[i],r=s.r;let h="";document.documentElement.dataset.r=ph=="start"?1:r;
+ $("rn").textContent=ph=="start"||ph=="end"?"":`Tur ${r} · ${R[r].n}`;
+ if(ph=="start")h=`<h2>Paradoks Odası</h2><p>Üç tur, tek oyun. Takım adlarını girin; herkes 50 puanla başlar.</p><p><label>Oyun uzunluğu <select id="len"><option value="k">Kısa · 11 soru</option><option value="o">Orta · 24 soru</option><option value="t" selected>Tam · 50 soru</option></select></label></p><div id="qr" class="qr"></div><p id="cnt"></p><div class="names">${T.map((t,k)=>`<input id="n${k}" aria-label="Takım ${k+1}" maxlength="14" value="${esc(t.n)}" style="--c:var(--t${k+1})">`).join("")}</div>`;
+ else if(ph=="end"){const q=[...T].sort((a,b)=>b.s-a.s);h=`<h2>${esc(q[0].n)} odadan çıktı</h2><ol>${q.map(t=>`<li>${esc(t.n)}: ${t.s} puan</li>`).join("")}</ol><p>Şimdi sınıfla konuşun: yeni veri gelince fikrini değiştirmek zayıflık mı, bilimsel dürüstlük mü?</p>`}
+ else if(ph=="risk")h=`<h2>Riske girer misiniz?</h2><p>Güvenli: kazanırsan bahsin kadar puan alırsın, kaybedersen bahsini yitirirsin. Riskli ⚡: kazanırsan bahsin iki katını alırsın, ama yanılırsan puanının yarısını kaybedersin. Her takım kendi kararını verir.</p><div class="panels">${T.map((t,k)=>panel(k)).join("")}</div>`;
+ else if(ph=="intro")h=`<h2>Tur ${r}: ${R[r].n}</h2><p>${R[r].d}</p>`;
+ else{
+  h=r==2?`<p class="tag">Yarım cümle · Ders kitabı ${s.p}</p><h2>${s.q} …</h2>`:`<p class="tag">${s.t}${r==3?" · Varsayımsal senaryo":""}</p><h2>${s.q}</h2><ul class="opts">${(s.a||s.o).map((o,x)=>`<li><b>${AB[x]}</b>${o}</li>`).join("")}</ul>`;
+  if(ph=="oku")h+=`<p>${r==1?"Takımlar 20 saniyede kendi tarafını seçer. Sonra kura onları karşı tarafı savunmaya zorlar.":r==2?"Takımlar 30 saniyede cümleyi kâğıda tamamlar.":s.f?"Takımlar 40 saniyede seçenek ve ilke seçer; tüm puanı masaya koyar.":"Takımlar 40 saniyede seçenek, ilke ve bahis seçer."}</p>`;
+  if(ph=="yaz")h+="<p>Takımlar cümleyi kâğıda yazıyor.</p>";
+  if(r==3&&["veri","juri","sonuc"].includes(ph))h+=`<div class="data"><b>Yeni veri:</b> ${s.n}</div>`;
+  if(r==2&&(ph=="ac"||ph=="sonuc"))h+=`<div class="data"><b>Kitapta:</b> ${s.q} ${s.n}</div>`;
+  if(["sec","kura","karar","veri","juri","ac","sonuc"].includes(ph))h+=`<div class="panels">${T.map((t,k)=>panel(k)).join("")}</div>`}
+ $("view").innerHTML=h;
+ $("go").textContent=({start:"Odaya gir",intro:"Turu başlat",risk:"Riskleri kilitle · Turu başlat",oku:r==1?"Taraf seçimini başlat · 20 sn":r==2?"Süreyi başlat · 30 sn":"Süreyi başlat · 40 sn",sec:"Kurayı çek",kura:"Jüriye geç",yaz:"Cümleyi aç",ac:"Puanları işle",karar:"Yeni veriyi aç",veri:"Jüriye geç",juri:"Puanları işle",sonuc:i<S.length-1?(S[i+1].r!=r?"Sonraki tur":"Sonraki soru"):"Final sonucu",end:"Baştan oyna"})[ph]}
+$("view").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;(b.dataset.f=="rk"?T:D)[b.dataset.k][b.dataset.f]=Number(b.dataset.v);render()});
+$("go").addEventListener("click",next);
+const Q=new URLSearchParams(location.search),HOST=Q.has("k"),KEY=Q.get("k")||"",JOIN=location.origin+location.pathname;
+let PE=[],G=null,ME={};const ID=Math.random().toString(36).slice(2,10);
+const post=(u,b)=>fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).catch(()=>{});
+function snap(){const s=S[i]||{},r=s.r;return{ph,ix:i,n:S.length,r,rn:r?R[r].n:"",d:r?R[r].d:"",t:s.t,q:s.q,a:s.a,o:s.o,f:s.f,p:s.p,nw:(r==3&&["veri","juri","sonuc"].includes(ph))||(r==2&&(ph=="ac"||ph=="sonuc"))?s.n:null,te:TE,tot:TOT,T:T.map((t,k)=>({n:t.n,s:t.s,rk:t.rk||0,o2:D[k]?D[k].o2:null,dl:D[k]?D[k].dl:0}))}}
+const bc=()=>post("/state?k="+encodeURIComponent(KEY),snap());
+function cnt(){const e=$("cnt");if(!e)return;const c=[0,0,0];PE.forEach(p=>{if(p.t!=null)c[p.t]++});e.textContent="Bağlı oyuncular: "+T.map((t,k)=>t.n+" "+c[k]).join(" · ")}
+function qr(){if(ph=="start"&&window.QRCode&&$("qr")&&!$("qr").firstChild)new QRCode($("qr"),{text:JOIN,width:200,height:200});cnt()}
+function agg(){if(ph=="start"||ph=="end")return;const F=["o","il","b","o2","rk"],c=T.map(()=>({})),jy=T.map(()=>T.map(()=>[0,0]));let ch=false;
+ PE.forEach(p=>{if(p.ix!==i||p.t==null)return;F.forEach(f=>{if(p[f]!=null){const m=c[p.t][f]=c[p.t][f]||{};m[p[f]]=(m[p[f]]||0)+1}});(p.jv||[]).forEach((v,j)=>{if(v!=null&&j!=p.t)jy[j][p.t][v]++})});
+ T.forEach((t,k)=>{F.forEach(f=>{const m=c[k][f];if(!m)return;const v=Number(Object.keys(m).sort((a,b)=>m[b]-m[a]||a-b)[0]);if(f=="rk"){if(ph=="risk"&&t.rk!==v){t.rk=v;ch=true}}else if(D[k][f]!==v){D[k][f]=v;ch=true}});
+  if(ph=="juri"){let y=0,n=0;jy[k].forEach(x=>{n+=x[0]+x[1];if(x[1]>x[0])y++});if(n&&D[k].j!==y){D[k].j=y;ch=true}}});
+ if(ch)render()}
+const send=()=>post("/vote",Object.assign({id:ID},ME));
+const vt=(f,v)=>{ME[f]=v;ME.ix=G.ix;send();prender()};
+const jv=(j,v)=>{ME.jv=ME.jv||[null,null,null];ME.jv[j]=v;ME.ix=G.ix;send();prender()};
+function ptick(){if(!G)return;const l=G.te?(G.te-Date.now())/1000:0,w=G.r==3&&l>0;$("timer").textContent=l>0?Math.ceil(l):"";room.style.setProperty("--p",w?1-l/G.tot:0);room.classList.toggle("urgent",w&&l<=10)}
+function prender(){const v=$("view"),g=G;$("go").style.display="none";
+ if(!g){v.innerHTML="<h2>Bağlanıyor…</h2><p>Oyun başlayınca burada görünecek.</p>";return}
+ if(ME.ix!=null&&ME.ix!==g.ix){ME={t:ME.t};send()}
+ document.documentElement.dataset.r=g.ph=="start"?1:g.r;$("rn").textContent=g.ph=="start"||g.ph=="end"?"":"Tur "+g.r+" · "+g.rn;
+ $("score").innerHTML=g.T.map((t,k)=>`<div class="chip" style="--c:var(--t${k+1})"><b>${esc(t.n)}${t.rk?" ⚡":""}</b><em>${t.s}</em></div>`).join("");
+ const P=g.ph,r=g.r,t=ME.t;let h="";
+ if(P=="end"){const q=[...g.T].sort((a,b)=>b.s-a.s);h=`<h2>${esc(q[0].n)} odadan çıktı</h2><ol>${q.map(x=>`<li>${esc(x.n)}: ${x.s} puan</li>`).join("")}</ol>`}
+ else if(t==null)h=`<h2>Takımını seç</h2><div class="panels">${g.T.map((x,k)=>`<button type="button" class="b on" style="--c:var(--t${k+1});font-size:1.5em;padding:1rem" data-pt="${k}">${esc(x.n)}</button>`).join("")}</div>`;
+ else{const my=g.T[t],Bp=(f,x,l,on)=>`<button type="button" class="b${on?" on":""}" style="--c:var(--t${t+1})" data-pf="${f}" data-pv="${x}">${l}</button>`,Bj=(j,x,l)=>`<button type="button" class="b${ME.jv&&ME.jv[j]===x?" on":""}" style="--c:var(--t${t+1})" data-pj="${j}" data-pv="${x}">${l}</button>`,
+  dc=g.nw?`<div class="data"><b>${r==2?"Kitapta":"Yeni veri"}:</b> ${r==2?g.q+" ":""}${g.nw}</div>`:"";
+  h=`<p class="tag">Takımın: ${esc(my.n)} · ${my.s} puan</p>`;
+  if(P=="start")h+="<h2>Hazır ol</h2><p>Oyun başlamak üzere.</p>";
+  else if(P=="intro")h+=`<h2>Tur ${r}: ${g.rn}</h2><p>${g.d}</p>`;
+  else if(P=="risk")h+=`<h2>Riske girer misiniz?</h2><p>Takımca karar verin; çoğunluk neyi seçerse o geçerli.</p>`+Bp("rk",0,"Güvenli",ME.rk===0)+Bp("rk",1,"Riskli ⚡",ME.rk===1);
+  else{h+=r==2?`<h2>${g.q} …</h2>`:`<p class="tag">${g.t}</p><h2>${g.q}</h2><ul class="opts">${(g.a||g.o).map((o,x)=>`<li><b>${AB[x]}</b>${o}</li>`).join("")}</ul>`;
+   if(P=="sec")h+=[0,1].map(x=>Bp("o",x,AB[x],ME.o===x)).join("");
+   else if(P=="kura")h+=`<p class="dl">Savunacağın taraf: ${AB[my.o2]}</p>`;
+   else if(P=="yaz")h+="<p>Cümleyi kâğıda tamamla.</p>";
+   else if(P=="karar")h+=AB.map((a,x)=>Bp("o",x,a,ME.o===x)).join("")+"<br>"+IL.map((a,x)=>Bp("il",x,a,ME.il===x)).join("")+"<br>"+(g.f?"<p>Tüm puan masada.</p>":[10,50,100].map(p=>Bp("b",p,"%"+p,ME.b===p)).join(""));
+   else if(P=="veri")h+=dc+AB.map((a,x)=>Bp("o2",x,a,ME.o2===x)).join("");
+   else if(P=="juri")h+=dc+"<h3>Diğer takımları oyla</h3>"+g.T.map((x,j)=>j==t?"":`<p>${esc(x.n)} savunulabilir mi?</p>`+Bj(j,1,"Savunulabilir")+Bj(j,0,"Değil")).join("");
+   else if(P=="ac")h+=dc;
+   else if(P=="sonuc")h+=dc+`<p class="dl">${my.dl>0?"+":""}${my.dl||0}</p>`}}
+ v.innerHTML=h}
+function render(){if(!HOST){prender();return}render0();bc();qr()}
+$("view").addEventListener("click",e=>{if(HOST)return;const b=e.target.closest("button");if(!b)return;const d=b.dataset;if(d.pt!=null){ME.t=Number(d.pt);send();prender()}else if(d.pf)vt(d.pf,Number(d.pv));else if(d.pj!=null)jv(Number(d.pj),Number(d.pv))});
+$("view").addEventListener("input",e=>{if(HOST&&/^n[0-2]$/.test(e.target.id)){T[Number(e.target.id[1])].n=e.target.value;bc()}});
+if(HOST){const es=new EventSource("/events?k="+encodeURIComponent(KEY));es.addEventListener("p",e=>{PE=JSON.parse(e.data);cnt();agg()})}
+else{document.body.classList.add("pl");const es=new EventSource("/events");es.addEventListener("g",e=>{G=JSON.parse(e.data);prender()});setInterval(ptick,250)}
+render();
+</script></body></html>
